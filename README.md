@@ -2,7 +2,7 @@
 
 Going through PLONK I realized the many different paths you might take to learn, as I go through my intro to PLONK I've created this repo to curate some of the best resources I've found going 0-1 on PLONK, ending with implementating part of a PLONK proving system in Python. Out of the resources I've come across these are the highest quality and hopefully this can help guide your own learning path. 
 
-Reminder - ChatGPT is your friend
+Reminder - ChatGPT/Claude are your friends
 
 
 ### Intro
@@ -26,13 +26,6 @@ Reminder - ChatGPT is your friend
 ## Code
 - [PlonKathon - Educational Python Implementation](https://github.com/0xPARC/plonkathon)
   - Great educational resource to apply the theory, putting it into practice with implementing part of the PLONK proof system in Python.
- 
-## My Path
-WIP, currently finishing PLONK by hand pt.3 (Verification) & PlonKathon. 
-Finding it particulary helpful to do a section of PLONK by Hand then corresponding PlonKathon sections. 
-
-## Recommended Path
-TBD
 
 If you're looking to dive deeper, there's a perfect Github full with even more resources for you to explore:
 [Awesome PLONK](https://github.com/fluidex/awesome-plonk)
