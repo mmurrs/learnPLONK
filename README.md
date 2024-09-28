@@ -4,7 +4,7 @@ Going through PLONK I realized the many different paths you might take to learn,
 
 Reminder - ChatGPT/Claude are your friends
 
-
+## Resources
 ### Intro
 - [Vitalik's Understanding PLONK](https://vitalik.eth.limo/general/2019/09/22/plonk.html)
   - This is a great introductory reference and visuals which are helpful to run through the circuits.
@@ -23,9 +23,22 @@ Reminder - ChatGPT/Claude are your friends
   - [Part 3 - Verification](https://research.metastate.dev/plonk-by-hand-part-3-verification/)
 - Go through each part working through the math with pen(cil) & paper. A bit more technical and a bit more time consuming than the others, I suggest going through each of the lines even if it means copying the math. Try to work through it yourself and questions will emerge which help you to connect the dots.
 
-## Code
+### Code
 - [PlonKathon - Educational Python Implementation](https://github.com/0xPARC/plonkathon)
   - Great educational resource to apply the theory, putting it into practice with implementing part of the PLONK proof system in Python.
+- [Ronkathon - Rust Implementation of Cryptographic Primitives](https://github.com/pluto/ronkathon)
+------
+## Recommended Path
+*Caveat: I did not finish the path fully, going through this made me appreciate proving abstractions even more like zkVM/zkEVMs :)*
+
+
+Overall I would recommend bouncing between both theory & practical, working in pure abstract can be difficult to understand or makes it harder to ask deeper questions. 
+
+- Theory - Intro [Vitalik's Understanding PLONK](https://vitalik.eth.limo/general/2019/09/22/plonk.html)
+- Theory - Original Research Paper [PLONK: Permutations over Lagrange-bases for Oecumenical Noninteractive arguments of Knowledge](https://eprint.iacr.org/2019/953.pdf)
+- Apply - Hands on Keyboard [Plonkathon](https://github.com/0xPARC/plonkathon) or [Ronkathon](https://github.com/pluto/ronkathon)
+- Theory - Reference [David Wong's - PLONK Series](https://www.youtube.com/watch?v=RUZcam_jrz0&list=PLBJMt6zV1c7Gh9Utg-Vng2V6EYVidTFCC&pp=iAQB)
+  - Good reference for different components
 
 If you're looking to dive deeper, there's a perfect Github full with even more resources for you to explore:
 [Awesome PLONK](https://github.com/fluidex/awesome-plonk)
