@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn PLONK - Interactive Guide to Zero-Knowledge Proofs</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav id="sidebar">
+    <div class="nav-header">
+      <h2>Learn PLONK</h2>
+      <div class="progress-bar">
+        <div class="progress-fill" id="globalProgress"></div>
+      </div>
+      <span class="progress-text" id="globalProgressText">0% complete</span>
+    </div>
+    <ul id="navList">
+      <li><a href="#context" class="nav-link active" data-module="0">The Big Picture</a></li>
+      <li><a href="#plonk-overview" class="nav-link" data-module="1">What is PLONK?</a></li>
+      <li><a href="#math-foundations" class="nav-link" data-module="2">Math Foundations</a></li>
+      <li><a href="#plonk-protocol" class="nav-link" data-module="3">The PLONK Protocol</a></li>
+      <li><a href="#by-hand" class="nav-link" data-module="4">PLONK by Hand</a></li>
+      <li><a href="#video-deep-dive" class="nav-link" data-module="5">Video Deep Dive</a></li>
+      <li><a href="#implementation" class="nav-link" data-module="6">Implementation</a></li>
+      <li><a href="#next-steps" class="nav-link" data-module="7">Going Deeper</a></li>
+    </ul>
+    <div class="nav-footer">
+      <p>Based on <a href="https://github.com/mmblockchain/learnPLONK" target="_blank">learnPLONK</a> by Matt Murray</p>
+    </div>
+  </nav>
+
+  <!-- Mobile nav toggle -->
+  <button id="navToggle" aria-label="Toggle navigation">&#9776;</button>
+
+  <!-- Main content -->
+  <main id="content">
+
+    <!-- Hero -->
+    <header class="hero">
+      <h1>Learn PLONK</h1>
+      <p class="hero-sub">An interactive guide to understanding zero-knowledge proofs &mdash; from first principles to implementation</p>
+      <div class="hero-path">
+        <div class="path-step">
+          <div class="path-icon">1</div>
+          <span>Context</span>
+        </div>
+        <div class="path-arrow">&rarr;</div>
+        <div class="path-step">
+          <div class="path-icon">2</div>
+          <span>Theory</span>
+        </div>
+        <div class="path-arrow">&rarr;</div>
+        <div class="path-step">
+          <div class="path-icon">3</div>
+          <span>Math</span>
+        </div>
+        <div class="path-arrow">&rarr;</div>
+        <div class="path-step">
+          <div class="path-icon">4</div>
+          <span>Practice</span>
+        </div>
+        <div class="path-arrow">&rarr;</div>
+        <div class="path-step">
+          <div class="path-icon">5</div>
+          <span>Build</span>
+        </div>
+      </div>
+      <p class="hero-tip"><strong>Tip:</strong> Bounce between theory &amp; practice. Working in pure abstraction makes it harder to ask deeper questions.</p>
+    </header>
+
+    <!-- Module 0: The Big Picture -->
+    <section id="context" class="module" data-module="0">
+      <div class="module-header">
+        <span class="module-tag">Module 0</span>
+        <h2>The Big Picture</h2>
+        <p class="module-desc">Before diving into PLONK, let's understand why it exists and where it fits.</p>
+      </div>
+
+      <div class="card">
+        <h3>What Are Zero-Knowledge Proofs?</h3>
+        <p>A <strong>zero-knowledge proof</strong> (ZKP) lets one party (the <em>prover</em>) convince another party (the <em>verifier</em>) that a statement is true &mdash; <strong>without revealing any information beyond the truth of the statement itself</strong>.</p>
+
+        <div class="example-box">
+          <h4>The Classic Analogy: Ali Baba's Cave</h4>
+          <p>Imagine a cave with a circular path and a locked door in the middle. You want to prove you know the secret word that opens the door, but you don't want to reveal the word.</p>
+          <ol>
+            <li>You enter the cave and take a random path (left or right).</li>
+            <li>The verifier, waiting outside, shouts which side they want you to come out from.</li>
+            <li>If you know the secret word, you can always come out the correct side (opening the door if needed).</li>
+            <li>After many rounds, the verifier is convinced you know the word &mdash; but never learns the word itself.</li>
+          </ol>
+        </div>
+
+        <p>ZKPs have three essential properties:</p>
+        <div class="three-col">
+          <div class="col-card">
+            <h4>Completeness</h4>
+            <p>If the statement is true and both parties follow the protocol, the verifier will be convinced.</p>
+          </div>
+          <div class="col-card">
+            <h4>Soundness</h4>
+            <p>If the statement is false, no cheating prover can convince the verifier (except with negligible probability).</p>
+          </div>
+          <div class="col-card">
+            <h4>Zero-Knowledge</h4>
+            <p>The verifier learns nothing beyond the fact that the statement is true.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>The ZK Proof Landscape</h3>
+        <p>The zero-knowledge proof ecosystem has evolved into several major proof system families:</p>
+
+        <div class="landscape-grid">
+          <div class="landscape-item">
+            <h4>SNARKs</h4>
+            <p><strong>S</strong>uccinct <strong>N</strong>on-interactive <strong>AR</strong>guments of <strong>K</strong>nowledge</p>
+            <ul>
+              <li>Small proof size (constant or logarithmic)</li>
+              <li>Fast verification</li>
+              <li>Typically requires a trusted setup</li>
+              <li><em>Examples: Groth16, PLONK, Marlin</em></li>
+            </ul>
+          </div>
+          <div class="landscape-item">
+            <h4>STARKs</h4>
+            <p><strong>S</strong>calable <strong>T</strong>ransparent <strong>AR</strong>guments of <strong>K</strong>nowledge</p>
+            <ul>
+              <li>No trusted setup (transparent)</li>
+              <li>Larger proof sizes</li>
+              <li>Post-quantum secure</li>
+              <li><em>Examples: StarkWare's systems</em></li>
+            </ul>
+          </div>
+          <div class="landscape-item highlight-item">
+            <h4>PLONK</h4>
+            <p><strong>P</strong>ermutations over <strong>L</strong>agrange-bases for <strong>O</strong>ecumenical <strong>N</strong>oninteractive arguments of <strong>K</strong>nowledge</p>
+            <ul>
+              <li><strong>Universal</strong> trusted setup (one ceremony works for all circuits)</li>
+              <li>Flexible gate design</li>
+              <li>Foundation for many modern ZK systems</li>
+              <li><em>Used by: zkSync, Aztec, Polygon zkEVM, Scroll</em></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Why Does This Matter?</h3>
+        <p>Zero-knowledge proofs are transforming multiple domains:</p>
+        <div class="two-col">
+          <div class="col-card">
+            <h4>Blockchain Scaling</h4>
+            <p>ZK-rollups batch thousands of transactions and prove their validity with a single proof. This is how systems like zkSync and Polygon zkEVM achieve massive throughput increases.</p>
+          </div>
+          <div class="col-card">
+            <h4>Privacy</h4>
+            <p>Prove you meet certain criteria (e.g., "I'm over 18", "I have sufficient funds") without revealing the underlying data. Used in protocols like Zcash and Aztec.</p>
+          </div>
+          <div class="col-card">
+            <h4>Verifiable Computation</h4>
+            <p>Offload computation to an untrusted party and verify the result cheaply. The verifier does far less work than re-executing the computation.</p>
+          </div>
+          <div class="col-card">
+            <h4>Identity &amp; Credentials</h4>
+            <p>Prove properties about your identity (citizenship, qualifications) without exposing personal information. A building block for self-sovereign identity.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Knowledge Check -->
+      <div class="quiz-card" data-quiz="0">
+        <h3>Knowledge Check</h3>
+        <div class="quiz-question">
+          <p><strong>Q1:</strong> What makes PLONK's trusted setup different from earlier SNARKs like Groth16?</p>
+          <div class="quiz-options">
+            <button class="quiz-option" data-correct="false">PLONK doesn't require a trusted setup at all</button>
+            <button class="quiz-option" data-correct="true">PLONK has a universal setup &mdash; one ceremony works for any circuit up to a certain size</button>
+            <button class="quiz-option" data-correct="false">PLONK requires a separate setup for each circuit, but it's faster</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        <div class="quiz-question">
+          <p><strong>Q2:</strong> Which property of ZK proofs ensures the verifier learns nothing beyond the truth of the statement?</p>
+          <div class="quiz-options">
+            <button class="quiz-option" data-correct="false">Completeness</button>
+            <button class="quiz-option" data-correct="false">Soundness</button>
+            <button class="quiz-option" data-correct="true">Zero-Knowledge</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+
+      <div class="module-complete">
+        <button class="btn-complete" data-module="0">Mark as Complete</button>
+      </div>
+    </section>
+
+    <!-- Module 1: What is PLONK? -->
+    <section id="plonk-overview" class="module" data-module="1">
+      <div class="module-header">
+        <span class="module-tag">Module 1</span>
+        <h2>What is PLONK?</h2>
+        <p class="module-desc">Understanding the core ideas behind PLONK and how it represents computation.</p>
+      </div>
+
+      <div class="card">
+        <h3>PLONK at a Glance</h3>
+        <p>PLONK was introduced in 2019 by Ariel Gabizon, Zachary J. Williamson, and Oana Ciobotaru. It's a <strong>universal zk-SNARK</strong> that has become one of the most widely adopted proving systems in the blockchain ecosystem.</p>
+        <p>The name is a (somewhat forced) acronym:</p>
+        <div class="acronym-breakdown">
+          <div class="acronym-letter"><span>P</span>ermutations</div>
+          <div class="acronym-letter"><span>L</span>agrange-bases</div>
+          <div class="acronym-letter"><span>O</span>ecumenical</div>
+          <div class="acronym-letter"><span>N</span>oninteractive</div>
+          <div class="acronym-letter"><span>K</span>nowledge</div>
+        </div>
+        <p>"Oecumenical" here means <strong>universal</strong> &mdash; the same setup can be used for different circuits. This was a major improvement over earlier systems where each circuit needed its own trusted setup ceremony.</p>
+      </div>
+
+      <div class="card">
+        <h3>How PLONK Represents Computation</h3>
+        <p>PLONK turns any computation into something that can be proven in zero-knowledge through a process called <strong>arithmetization</strong>. Here's the pipeline:</p>
+
+        <div class="pipeline">
+          <div class="pipeline-step">
+            <div class="pipeline-num">1</div>
+            <h4>Computation</h4>
+            <p>Start with a program or statement you want to prove (e.g., "I know x such that x&sup3; + x + 5 = 35")</p>
+          </div>
+          <div class="pipeline-arrow">&darr;</div>
+          <div class="pipeline-step">
+            <div class="pipeline-num">2</div>
+            <h4>Arithmetic Circuit</h4>
+            <p>Express the computation as a circuit of addition and multiplication gates, connected by wires</p>
+          </div>
+          <div class="pipeline-arrow">&darr;</div>
+          <div class="pipeline-step">
+            <div class="pipeline-num">3</div>
+            <h4>Constraint System</h4>
+            <p>Convert the circuit into polynomial equations. Each gate becomes a constraint, and wire connections become copy constraints</p>
+          </div>
+          <div class="pipeline-arrow">&darr;</div>
+          <div class="pipeline-step">
+            <div class="pipeline-num">4</div>
+            <h4>Polynomial IOP</h4>
+            <p>The prover commits to polynomials that encode the witness (the secret inputs) and proves they satisfy all constraints</p>
+          </div>
+          <div class="pipeline-arrow">&darr;</div>
+          <div class="pipeline-step">
+            <div class="pipeline-num">5</div>
+            <h4>ZK Proof</h4>
+            <p>Using a polynomial commitment scheme (KZG), produce a compact proof that the verifier can check quickly</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Arithmetic Circuits &amp; Gates</h3>
+        <p>In PLONK, computation is broken down into <strong>gates</strong>. Each gate takes inputs from the left (<code>a</code>) and right (<code>b</code>) wires and produces an output (<code>c</code>) wire.</p>
+        <p>A general PLONK gate enforces this constraint:</p>
+        <div class="formula">
+          q<sub>L</sub>&middot;a + q<sub>R</sub>&middot;b + q<sub>O</sub>&middot;c + q<sub>M</sub>&middot;(a&middot;b) + q<sub>C</sub> = 0
+        </div>
+        <p>The <code>q</code> values are <strong>selector polynomials</strong> chosen by the circuit designer. Different selectors create different gate types:</p>
+
+        <div class="collapsible">
+          <button class="collapsible-toggle">
+            <span>See gate type examples</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <table>
+              <thead>
+                <tr><th>Gate Type</th><th>q<sub>L</sub></th><th>q<sub>R</sub></th><th>q<sub>O</sub></th><th>q<sub>M</sub></th><th>q<sub>C</sub></th><th>Constraint</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Addition</td><td>1</td><td>1</td><td>-1</td><td>0</td><td>0</td><td>a + b - c = 0</td></tr>
+                <tr><td>Multiplication</td><td>0</td><td>0</td><td>-1</td><td>1</td><td>0</td><td>a&middot;b - c = 0</td></tr>
+                <tr><td>Constant</td><td>1</td><td>0</td><td>0</td><td>0</td><td>-k</td><td>a = k</td></tr>
+                <tr><td>Boolean</td><td>-1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>a&middot;a - a = 0 (a is 0 or 1)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Copy Constraints (The "P" in PLONK)</h3>
+        <p>When wires from one gate feed into another, we need <strong>copy constraints</strong> to ensure the same value appears in both places. This is where <strong>permutation arguments</strong> come in.</p>
+        <p>PLONK uses a clever permutation argument to check that wire values are consistent across gates. Instead of checking each connection individually, it encodes all wire connections as a single permutation and verifies it using a <strong>grand product argument</strong>.</p>
+        <div class="key-insight">
+          <strong>Key Insight:</strong> The permutation argument is what makes PLONK "PLONK" &mdash; it's an elegant way to enforce that values are correctly wired between gates, and it works for any circuit topology.
+        </div>
+      </div>
+
+      <div class="card resource-card">
+        <h3>Primary Resource</h3>
+        <div class="resource-link">
+          <a href="https://vitalik.eth.limo/general/2019/09/22/plonk.html" target="_blank" rel="noopener">
+            Vitalik's Understanding PLONK
+          </a>
+          <p>A great introductory reference with helpful visuals for running through circuits. Start here to build intuition before diving into the math.</p>
+          <span class="resource-type">Blog Post &middot; ~30 min read</span>
+        </div>
+      </div>
+
+      <div class="quiz-card" data-quiz="1">
+        <h3>Knowledge Check</h3>
+        <div class="quiz-question">
+          <p><strong>Q1:</strong> In PLONK's gate constraint <code>q_L&middot;a + q_R&middot;b + q_O&middot;c + q_M&middot;(a&middot;b) + q_C = 0</code>, what do the q values represent?</p>
+          <div class="quiz-options">
+            <button class="quiz-option" data-correct="false">The secret witness values</button>
+            <button class="quiz-option" data-correct="true">Selector polynomials that define the gate type</button>
+            <button class="quiz-option" data-correct="false">Random challenges from the verifier</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        <div class="quiz-question">
+          <p><strong>Q2:</strong> What problem do copy constraints solve?</p>
+          <div class="quiz-options">
+            <button class="quiz-option" data-correct="false">They ensure the proof is small enough</button>
+            <button class="quiz-option" data-correct="true">They ensure the same value appears on wires that should be connected between gates</button>
+            <button class="quiz-option" data-correct="false">They hide the witness values from the verifier</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+
+      <div class="module-complete">
+        <button class="btn-complete" data-module="1">Mark as Complete</button>
+      </div>
+    </section>
+
+    <!-- Module 2: Math Foundations -->
+    <section id="math-foundations" class="module" data-module="2">
+      <div class="module-header">
+        <span class="module-tag">Module 2</span>
+        <h2>Math Foundations</h2>
+        <p class="module-desc">The mathematical building blocks that make PLONK possible.</p>
+      </div>
+
+      <div class="card">
+        <h3>Finite Fields</h3>
+        <p>All arithmetic in PLONK happens over a <strong>finite field</strong> &mdash; a set of numbers where addition, subtraction, multiplication, and division all wrap around a prime number <code>p</code>.</p>
+        <div class="example-box">
+          <h4>Think of it like clock arithmetic</h4>
+          <p>In a field with p = 7: <code>5 + 4 = 9 mod 7 = 2</code>. Every operation stays within {0, 1, 2, 3, 4, 5, 6}. This bounded arithmetic is essential for cryptographic security &mdash; there's no "overflow" leaking information.</p>
+        </div>
+        <p>Why finite fields? They give us exact arithmetic (no floating-point errors), efficient computation, and the algebraic structure needed for polynomial commitments and pairings.</p>
+      </div>
+
+      <div class="card">
+        <h3>Polynomials: The Language of PLONK</h3>
+        <p>Polynomials are the core data structure of PLONK. Everything &mdash; the circuit, the witness, the constraints &mdash; gets encoded as polynomials.</p>
+
+        <div class="key-insight">
+          <strong>The Schwartz-Zippel Lemma:</strong> If two different polynomials of degree at most <code>d</code> are evaluated at a random point, they agree with probability at most <code>d/|F|</code>. Since our field is huge, this is negligibly small. This means: <em>checking polynomial equality at a random point is almost as good as checking it everywhere</em>.
+        </div>
+
+        <p>This is the fundamental insight that makes SNARKs succinct &mdash; instead of checking constraints for every gate, we check polynomial identities at random points.</p>
+      </div>
+
+      <div class="card">
+        <h3>Lagrange Interpolation (The "L" in PLONK)</h3>
+        <p>Given a set of points, <strong>Lagrange interpolation</strong> finds the unique polynomial that passes through all of them.</p>
+        <p>PLONK uses a special set of evaluation points called <strong>roots of unity</strong> &mdash; the n-th roots of 1 in the finite field. These form a multiplicative subgroup with nice algebraic properties that make the Fast Fourier Transform (FFT) efficient.</p>
+
+        <div class="collapsible">
+          <button class="collapsible-toggle">
+            <span>Why roots of unity?</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <p>Roots of unity &omega; satisfy &omega;<sup>n</sup> = 1. The set {1, &omega;, &omega;&sup2;, ..., &omega;<sup>n-1</sup>} has a cyclic structure that enables:</p>
+            <ul>
+              <li><strong>Efficient FFT:</strong> Convert between coefficient and evaluation form in O(n log n)</li>
+              <li><strong>Simple vanishing polynomial:</strong> Z<sub>H</sub>(x) = x<sup>n</sup> - 1 vanishes on all roots of unity</li>
+              <li><strong>Clean Lagrange bases:</strong> The Lagrange basis polynomials have simple closed forms</li>
+            </ul>
+            <p>This structure is critical for PLONK's efficiency &mdash; without it, polynomial operations would be prohibitively expensive.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Polynomial Commitment Schemes (KZG)</h3>
+        <p>A <strong>polynomial commitment scheme</strong> lets you commit to a polynomial and later prove evaluations of it without revealing the entire polynomial. PLONK uses the <strong>Kate-Zaverucha-Goldberg (KZG)</strong> scheme.</p>
+
+        <div class="pipeline">
+          <div class="pipeline-step">
+            <div class="pipeline-num">1</div>
+            <h4>Commit</h4>
+            <p>The prover computes a commitment C = [f(s)]<sub>1</sub> using the structured reference string (SRS) from the trusted setup</p>
+          </div>
+          <div class="pipeline-arrow">&darr;</div>
+          <div class="pipeline-step">
+            <div class="pipeline-num">2</div>
+            <h4>Open</h4>
+            <p>To prove f(z) = y, the prover computes a quotient polynomial q(x) = (f(x) - y) / (x - z) and commits to it</p>
+          </div>
+          <div class="pipeline-arrow">&darr;</div>
+          <div class="pipeline-step">
+            <div class="pipeline-num">3</div>
+            <h4>Verify</h4>
+            <p>The verifier checks the opening using an elliptic curve pairing: e(C - [y]<sub>1</sub>, [1]<sub>2</sub>) = e([q]<sub>1</sub>, [s - z]<sub>2</sub>)</p>
+          </div>
+        </div>
+
+        <div class="key-insight">
+          <strong>Why KZG is powerful:</strong> Commitments are a single elliptic curve point (48 bytes). Opening proofs are also a single point. Verification requires just 2 pairing operations regardless of polynomial degree. This is what makes PLONK proofs succinct.
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Elliptic Curve Pairings</h3>
+        <p>Pairings are a special mathematical operation on elliptic curves that PLONK uses for verification. A pairing <code>e</code> maps two curve points to a target group element with a key property:</p>
+        <div class="formula">
+          e([a]<sub>1</sub>, [b]<sub>2</sub>) = e([1]<sub>1</sub>, [1]<sub>2</sub>)<sup>ab</sup>
+        </div>
+        <p>This <strong>bilinearity</strong> lets the verifier check polynomial relationships without knowing the secret evaluation point <code>s</code> from the trusted setup. PLONK typically uses the BN254 or BLS12-381 curves.</p>
+      </div>
+
+      <div class="quiz-card" data-quiz="2">
+        <h3>Knowledge Check</h3>
+        <div class="quiz-question">
+          <p><strong>Q1:</strong> Why does PLONK evaluate polynomials at roots of unity?</p>
+          <div class="quiz-options">
+            <button class="quiz-option" data-correct="false">Because roots of unity are the smallest field elements</button>
+            <button class="quiz-option" data-correct="true">Because their cyclic structure enables efficient FFT and gives clean vanishing polynomials</button>
+            <button class="quiz-option" data-correct="false">Because the verifier can only check evaluations at roots of unity</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        <div class="quiz-question">
+          <p><strong>Q2:</strong> What does the Schwartz-Zippel lemma tell us?</p>
+          <div class="quiz-options">
+            <button class="quiz-option" data-correct="true">Two different polynomials almost never agree at a random point, so random-point checks prove polynomial equality</button>
+            <button class="quiz-option" data-correct="false">Polynomials of the same degree always have the same roots</button>
+            <button class="quiz-option" data-correct="false">You need to evaluate a polynomial at every point to verify it</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+
+      <div class="module-complete">
+        <button class="btn-complete" data-module="2">Mark as Complete</button>
+      </div>
+    </section>
+
+    <!-- Module 3: The PLONK Protocol -->
+    <section id="plonk-protocol" class="module" data-module="3">
+      <div class="module-header">
+        <span class="module-tag">Module 3</span>
+        <h2>The PLONK Protocol</h2>
+        <p class="module-desc">The three phases of PLONK: Setup, Prove, and Verify.</p>
+      </div>
+
+      <div class="card">
+        <h3>Phase 1: Universal Setup</h3>
+        <p>The setup generates a <strong>Structured Reference String (SRS)</strong> from a secret value <code>s</code> (the "toxic waste" that must be destroyed).</p>
+        <p>The SRS contains powers of <code>s</code> encoded on the elliptic curve:</p>
+        <div class="formula">
+          SRS = { [1]<sub>1</sub>, [s]<sub>1</sub>, [s&sup2;]<sub>1</sub>, ..., [s<sup>n</sup>]<sub>1</sub>, [1]<sub>2</sub>, [s]<sub>2</sub> }
+        </div>
+        <p>The key innovation: this SRS is <strong>universal</strong>. Unlike Groth16 where you need a new setup for each circuit, PLONK's SRS works for <em>any</em> circuit up to size n. This is done through a <strong>powers-of-tau ceremony</strong> where many participants contribute randomness &mdash; the setup is secure as long as at least one participant is honest.</p>
+      </div>
+
+      <div class="card">
+        <h3>Phase 2: Proving</h3>
+        <p>The prover goes through several rounds to generate the proof, using the <strong>Fiat-Shamir heuristic</strong> to make the protocol non-interactive (challenges come from hashing transcripts instead of an interactive verifier).</p>
+
+        <div class="collapsible">
+          <button class="collapsible-toggle">
+            <span>Prover rounds (detailed)</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <div class="round-box">
+              <h4>Round 1: Wire Polynomials</h4>
+              <p>The prover constructs polynomials <code>a(x)</code>, <code>b(x)</code>, <code>c(x)</code> encoding the wire values (the witness) using Lagrange interpolation over the roots of unity. Blinding factors are added for zero-knowledge. The prover commits to these polynomials.</p>
+            </div>
+            <div class="round-box">
+              <h4>Round 2: Permutation Polynomial</h4>
+              <p>Using challenges &beta; and &gamma; from the Fiat-Shamir transcript, the prover constructs the permutation accumulator polynomial <code>z(x)</code> that encodes the grand product argument for copy constraints. The prover commits to z(x).</p>
+            </div>
+            <div class="round-box">
+              <h4>Round 3: Quotient Polynomial</h4>
+              <p>Using challenge &alpha;, the prover combines all constraints (gate constraints + permutation constraints) into one big polynomial, divides by the vanishing polynomial Z<sub>H</sub>(x) = x<sup>n</sup> - 1, and splits the quotient into parts. The prover commits to the quotient parts.</p>
+            </div>
+            <div class="round-box">
+              <h4>Round 4: Evaluations</h4>
+              <p>Using evaluation challenge &zeta;, the prover evaluates all relevant polynomials at &zeta; (and z(x) at &zeta;&omega;) and provides these as field elements.</p>
+            </div>
+            <div class="round-box">
+              <h4>Round 5: Opening Proofs</h4>
+              <p>Using challenge &nu;, the prover constructs linearized opening proofs (KZG) that let the verifier check all evaluations in a batch.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Phase 3: Verification</h3>
+        <p>The verifier reconstructs the challenges from the proof transcript (Fiat-Shamir), then checks:</p>
+        <ol>
+          <li><strong>Gate constraint:</strong> The committed polynomials satisfy the arithmetic gate equation at the evaluation point</li>
+          <li><strong>Permutation constraint:</strong> The permutation accumulator starts at 1 and the grand product relation holds</li>
+          <li><strong>Polynomial commitments:</strong> The evaluations are consistent with the commitments (via KZG pairing checks)</li>
+        </ol>
+        <div class="key-insight">
+          <strong>Verification is fast:</strong> The verifier only needs to perform a constant number of elliptic curve operations and pairings &mdash; independent of the circuit size. This is what makes PLONK (and SNARKs in general) powerful for on-chain verification.
+        </div>
+      </div>
+
+      <div class="card resource-card">
+        <h3>Primary Resource</h3>
+        <div class="resource-link">
+          <a href="https://eprint.iacr.org/2019/953.pdf" target="_blank" rel="noopener">
+            PLONK: Permutations over Lagrange-bases for Oecumenical Noninteractive arguments of Knowledge
+          </a>
+          <p>The original research paper by Gabizon, Williamson, and Ciobotaru. Read this alongside the practical resources to connect the formal definitions with implementation.</p>
+          <span class="resource-type">Research Paper &middot; 35 pages</span>
+        </div>
+      </div>
+
+      <div class="quiz-card" data-quiz="3">
+        <h3>Knowledge Check</h3>
+        <div class="quiz-question">
+          <p><strong>Q1:</strong> What is the Fiat-Shamir heuristic used for in PLONK?</p>
+          <div class="quiz-options">
+            <button class="quiz-option" data-correct="false">To generate the trusted setup</button>
+            <button class="quiz-option" data-correct="true">To make the protocol non-interactive by deriving challenges from hashing the transcript</button>
+            <button class="quiz-option" data-correct="false">To speed up polynomial multiplication</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        <div class="quiz-question">
+          <p><strong>Q2:</strong> Why does the prover divide by the vanishing polynomial Z<sub>H</sub>(x)?</p>
+          <div class="quiz-options">
+            <button class="quiz-option" data-correct="false">To make the polynomial smaller for faster verification</button>
+            <button class="quiz-option" data-correct="true">To prove that the constraint polynomial is zero on all roots of unity (i.e., all constraints are satisfied)</button>
+            <button class="quiz-option" data-correct="false">To add zero-knowledge blinding to the proof</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+
+      <div class="module-complete">
+        <button class="btn-complete" data-module="3">Mark as Complete</button>
+      </div>
+    </section>
+
+    <!-- Module 4: PLONK by Hand -->
+    <section id="by-hand" class="module" data-module="4">
+      <div class="module-header">
+        <span class="module-tag">Module 4</span>
+        <h2>PLONK by Hand</h2>
+        <p class="module-desc">Work through the math with pen and paper. This is where intuition gets forged.</p>
+      </div>
+
+      <div class="card">
+        <h3>Why Work by Hand?</h3>
+        <div class="key-insight">
+          <strong>From the learning path:</strong> "Go through each part working through the math with pen(cil) &amp; paper. A bit more technical and a bit more time consuming than the others, I suggest going through each of the lines even if it means copying the math. Try to work through it yourself and questions will emerge which help you to connect the dots."
+        </div>
+        <p>This series uses a tiny example circuit and walks through every step of PLONK with concrete numbers. There's no substitute for this &mdash; abstract understanding becomes real understanding when you compute each value yourself.</p>
+      </div>
+
+      <div class="card">
+        <h3>Part 1: Setup</h3>
+        <p>In this part you'll work through:</p>
+        <ul>
+          <li>Defining a simple arithmetic circuit</li>
+          <li>Assigning the selector polynomials (q<sub>L</sub>, q<sub>R</sub>, q<sub>O</sub>, q<sub>M</sub>, q<sub>C</sub>)</li>
+          <li>Setting up the permutation &sigma; for copy constraints</li>
+          <li>Computing the Lagrange basis polynomials over roots of unity</li>
+          <li>Generating a (simulated) SRS</li>
+        </ul>
+        <div class="resource-link">
+          <a href="https://research.metastate.dev/plonk-by-hand-part-1/" target="_blank" rel="noopener">PLONK by Hand &mdash; Part 1: Setup</a>
+          <span class="resource-type">Tutorial &middot; Work through with paper</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Part 2: The Proof</h3>
+        <p>Now you'll generate a proof step by step:</p>
+        <ul>
+          <li>Constructing witness polynomials a(x), b(x), c(x)</li>
+          <li>Computing the permutation accumulator z(x)</li>
+          <li>Building the quotient polynomial t(x)</li>
+          <li>Evaluating polynomials at the challenge point &zeta;</li>
+          <li>Creating the linearization and opening proofs</li>
+        </ul>
+        <div class="resource-link">
+          <a href="https://research.metastate.dev/plonk-by-hand-part-2-the-proof/" target="_blank" rel="noopener">PLONK by Hand &mdash; Part 2: The Proof</a>
+          <span class="resource-type">Tutorial &middot; Work through with paper</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Part 3: Verification</h3>
+        <p>Finally, you'll verify the proof:</p>
+        <ul>
+          <li>Reconstructing the challenges from the transcript</li>
+          <li>Checking the gate constraint evaluation</li>
+          <li>Checking the permutation constraint evaluation</li>
+          <li>Verifying the polynomial commitment openings with pairings</li>
+          <li>Confirming the proof is valid</li>
+        </ul>
+        <div class="resource-link">
+          <a href="https://research.metastate.dev/plonk-by-hand-part-3-verification/" target="_blank" rel="noopener">PLONK by Hand &mdash; Part 3: Verification</a>
+          <span class="resource-type">Tutorial &middot; Work through with paper</span>
+        </div>
+      </div>
+
+      <div class="card checklist-card">
+        <h3>Self-Check: Did You Absorb It?</h3>
+        <p>After working through all three parts, you should be able to answer these questions. Click each to reveal a brief answer.</p>
+
+        <div class="collapsible">
+          <button class="collapsible-toggle">
+            <span>What role does the vanishing polynomial play?</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <p>Z<sub>H</sub>(x) = x<sup>n</sup> - 1 is zero on all roots of unity. If a constraint polynomial is divisible by Z<sub>H</sub>, it means the constraints are satisfied at every gate position. The prover demonstrates this by providing the quotient t(x).</p>
+          </div>
+        </div>
+
+        <div class="collapsible">
+          <button class="collapsible-toggle">
+            <span>How does the grand product argument enforce copy constraints?</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <p>The permutation accumulator z(x) starts at 1 and accumulates a product of ratios. If the wire values respect the permutation (i.e., connected wires have the same value), the product telescopes and z ends at 1 again. Any mismatch causes z to diverge.</p>
+          </div>
+        </div>
+
+        <div class="collapsible">
+          <button class="collapsible-toggle">
+            <span>Why do we need blinding factors?</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <p>Without blinding, the committed polynomials would be fully determined by the witness, and a malicious verifier could potentially extract the secret values. Blinding factors add random terms that don't affect the constraint checks (they vanish on the evaluation domain) but make the polynomials information-theoretically hiding.</p>
+          </div>
+        </div>
+
+        <div class="collapsible">
+          <button class="collapsible-toggle">
+            <span>What is linearization and why is it needed?</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <p>Linearization is a technique to reduce the verifier's work. Instead of the verifier needing to compute products of committed polynomials (which would require expensive operations), the prover provides evaluations that let the verifier reduce everything to checking a single polynomial commitment opening. It turns a non-linear verification equation into a linear one.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="module-complete">
+        <button class="btn-complete" data-module="4">Mark as Complete</button>
+      </div>
+    </section>
+
+    <!-- Module 5: Video Deep Dive -->
+    <section id="video-deep-dive" class="module" data-module="5">
+      <div class="module-header">
+        <span class="module-tag">Module 5</span>
+        <h2>Video Deep Dive</h2>
+        <p class="module-desc">Visual and verbal explanations from experts. Great to reference alongside the other modules.</p>
+      </div>
+
+      <div class="card">
+        <h3>David Wong's PLONK Series</h3>
+        <p>A 12-part whiteboard-style walkthrough that breaks PLONK into digestible pieces. Use these as reference when working through the math or implementation.</p>
+
+        <div class="video-grid">
+          <div class="video-item">
+            <span class="video-num">1-3</span>
+            <h4>Foundations</h4>
+            <p>Introduction to the proving system, constraint systems, and the role of polynomials</p>
+          </div>
+          <div class="video-item">
+            <span class="video-num">4-6</span>
+            <h4>Gate Constraints</h4>
+            <p>How arithmetic gates work, selector polynomials, and encoding circuits</p>
+          </div>
+          <div class="video-item">
+            <span class="video-num">7-9</span>
+            <h4>Permutations</h4>
+            <p>Copy constraints, the permutation argument, and the grand product check</p>
+          </div>
+          <div class="video-item">
+            <span class="video-num">10-12</span>
+            <h4>Commitments &amp; Verification</h4>
+            <p>Polynomial commitments, the complete proof, and verification procedure</p>
+          </div>
+        </div>
+
+        <div class="resource-link">
+          <a href="https://www.youtube.com/watch?v=RUZcam_jrz0&list=PLBJMt6zV1c7Gh9Utg-Vng2V6EYVidTFCC&pp=iAQB" target="_blank" rel="noopener">
+            Watch the Full Playlist
+          </a>
+          <span class="resource-type">YouTube Playlist &middot; 12 videos</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Zac Williamson's Walkthrough</h3>
+        <p>A walkthrough by one of PLONK's co-authors. Provides a higher-level overview that connects the theoretical pieces without going into full implementation detail. Good for cementing your understanding after the by-hand exercises.</p>
+        <div class="resource-link">
+          <a href="https://www.youtube.com/watch?v=V7Hmtan98r8" target="_blank" rel="noopener">
+            Watch Zac Williamson's Overview
+          </a>
+          <span class="resource-type">YouTube &middot; Single video</span>
+        </div>
+      </div>
+
+      <div class="module-complete">
+        <button class="btn-complete" data-module="5">Mark as Complete</button>
+      </div>
+    </section>
+
+    <!-- Module 6: Implementation -->
+    <section id="implementation" class="module" data-module="6">
+      <div class="module-header">
+        <span class="module-tag">Module 6</span>
+        <h2>Implementation</h2>
+        <p class="module-desc">Put theory into practice by implementing parts of the PLONK proof system.</p>
+      </div>
+
+      <div class="card">
+        <h3>Why Implement?</h3>
+        <div class="key-insight">
+          <strong>From the learning path:</strong> "Overall I would recommend bouncing between both theory &amp; practical, working in pure abstract can be difficult to understand or makes it harder to ask deeper questions."
+        </div>
+        <p>Implementation forces you to confront every detail. Ambiguities in the math become concrete bugs. Edge cases that seemed theoretical become real problems. This is where the deepest learning happens.</p>
+      </div>
+
+      <div class="card">
+        <h3>PlonKathon (Python)</h3>
+        <p>The recommended hands-on resource. PlonKathon is an educational Python implementation of the PLONK proof system from 0xPARC.</p>
+
+        <div class="collapsible">
+          <button class="collapsible-toggle">
+            <span>What you'll implement</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <ul>
+              <li><strong>Polynomial arithmetic</strong> over finite fields</li>
+              <li><strong>Lagrange interpolation</strong> and evaluation on roots of unity</li>
+              <li><strong>Circuit setup</strong> &mdash; selector and permutation polynomials</li>
+              <li><strong>Proof generation</strong> &mdash; the five prover rounds</li>
+              <li><strong>Verification</strong> &mdash; checking the proof is valid</li>
+            </ul>
+            <p>The codebase provides the scaffolding (elliptic curve operations, pairings, field arithmetic) so you can focus on the PLONK-specific logic.</p>
+          </div>
+        </div>
+
+        <div class="resource-link">
+          <a href="https://github.com/0xPARC/plonkathon" target="_blank" rel="noopener">
+            PlonKathon &mdash; Educational Python Implementation
+          </a>
+          <span class="resource-type">GitHub Repository &middot; Python</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Ronkathon (Rust)</h3>
+        <p>For those who prefer Rust or want a second implementation perspective, Ronkathon provides implementations of cryptographic primitives relevant to PLONK.</p>
+
+        <div class="resource-link">
+          <a href="https://github.com/pluto/ronkathon" target="_blank" rel="noopener">
+            Ronkathon &mdash; Rust Implementation of Cryptographic Primitives
+          </a>
+          <span class="resource-type">GitHub Repository &middot; Rust</span>
+        </div>
+      </div>
+
+      <div class="card checklist-card">
+        <h3>Implementation Checklist</h3>
+        <p>Track your progress as you work through the implementation:</p>
+        <div class="impl-checklist">
+          <label class="check-item"><input type="checkbox" class="impl-check"> Set up the development environment</label>
+          <label class="check-item"><input type="checkbox" class="impl-check"> Understand the finite field and polynomial classes</label>
+          <label class="check-item"><input type="checkbox" class="impl-check"> Implement Lagrange interpolation</label>
+          <label class="check-item"><input type="checkbox" class="impl-check"> Build the circuit and compute selector polynomials</label>
+          <label class="check-item"><input type="checkbox" class="impl-check"> Implement the permutation argument</label>
+          <label class="check-item"><input type="checkbox" class="impl-check"> Implement the prover (all 5 rounds)</label>
+          <label class="check-item"><input type="checkbox" class="impl-check"> Implement the verifier</label>
+          <label class="check-item"><input type="checkbox" class="impl-check"> Run end-to-end: generate and verify a proof</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Pro Tips</h3>
+        <ul>
+          <li><strong>Use AI assistants:</strong> ChatGPT and Claude are your friends for debugging and understanding the math. Don't hesitate to ask "why does this polynomial evaluate to this value?"</li>
+          <li><strong>Print intermediate values:</strong> Compare your polynomial evaluations with the "by hand" examples to catch errors early</li>
+          <li><strong>Start with the tests:</strong> Most educational implementations come with tests. Run them as you implement each piece</li>
+          <li><strong>Don't skip the plumbing:</strong> Understanding how field arithmetic and polynomial operations work at the low level will pay dividends</li>
+        </ul>
+      </div>
+
+      <div class="module-complete">
+        <button class="btn-complete" data-module="6">Mark as Complete</button>
+      </div>
+    </section>
+
+    <!-- Module 7: Going Deeper -->
+    <section id="next-steps" class="module" data-module="7">
+      <div class="module-header">
+        <span class="module-tag">Module 7</span>
+        <h2>Going Deeper</h2>
+        <p class="module-desc">Where to go after you've built a foundation in PLONK.</p>
+      </div>
+
+      <div class="card">
+        <h3>PLONK Variants &amp; Extensions</h3>
+        <p>PLONK has spawned a family of improved proof systems:</p>
+        <div class="two-col">
+          <div class="col-card">
+            <h4>TurboPLONK</h4>
+            <p>Extends PLONK with custom gates (more than just add/multiply) for operations like hash functions and range checks. Reduces circuit sizes dramatically for common operations.</p>
+          </div>
+          <div class="col-card">
+            <h4>UltraPLONK</h4>
+            <p>Adds lookup tables (PLOOKup) on top of TurboPLONK. Instead of building everything from arithmetic gates, you can "look up" precomputed values &mdash; massive efficiency gains for bitwise operations.</p>
+          </div>
+          <div class="col-card">
+            <h4>HyperPLONK</h4>
+            <p>Replaces univariate polynomials with multilinear polynomials over the boolean hypercube. Avoids the need for FFTs and opens up new optimization possibilities.</p>
+          </div>
+          <div class="col-card">
+            <h4>PLONK + FRI</h4>
+            <p>Replaces KZG commitments with FRI (Fast Reed-Solomon IOP), eliminating the trusted setup. Used in systems like Plonky2 and Plonky3 by Polygon.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>The Bigger Ecosystem</h3>
+        <p>Understanding PLONK is a gateway to the broader ZK ecosystem:</p>
+        <ul>
+          <li><strong>zkEVMs:</strong> Systems like zkSync, Polygon zkEVM, and Scroll use PLONK-based provers to verify Ethereum transactions</li>
+          <li><strong>zkVMs:</strong> General-purpose virtual machines (like RISC Zero, SP1) that can prove arbitrary computation</li>
+          <li><strong>Recursive proofs:</strong> Using PLONK to verify PLONK proofs, enabling proof aggregation and incrementally verifiable computation</li>
+          <li><strong>Folding schemes:</strong> Nova, Sangria &mdash; alternative approaches to incrementally verifiable computation</li>
+        </ul>
+        <div class="key-insight">
+          <strong>From the learning path:</strong> "I did not finish the path fully, going through this made me appreciate proving abstractions even more like zkVM/zkEVMs :)" &mdash; Understanding what PLONK does under the hood makes you a better user and builder of ZK systems, even if you work at a higher abstraction level.
+        </div>
+      </div>
+
+      <div class="card resource-card">
+        <h3>Additional Resources</h3>
+        <div class="resource-link">
+          <a href="https://github.com/fluidex/awesome-plonk" target="_blank" rel="noopener">
+            Awesome PLONK
+          </a>
+          <p>A comprehensive GitHub repository with even more PLONK resources &mdash; papers, implementations, talks, and more.</p>
+          <span class="resource-type">GitHub &middot; Curated list</span>
+        </div>
+      </div>
+
+      <div class="module-complete">
+        <button class="btn-complete" data-module="7">Mark as Complete</button>
+      </div>
+    </section>
+
+    <!-- Recommended Path Summary -->
+    <section class="module path-summary">
+      <div class="module-header">
+        <h2>The Recommended Path</h2>
+        <p class="module-desc">A summary of the learning journey. Alternate between theory and practice for the best results.</p>
+      </div>
+
+      <div class="path-timeline">
+        <div class="timeline-item theory-item">
+          <div class="timeline-marker">Theory</div>
+          <div class="timeline-content">
+            <h4>1. Vitalik's Understanding PLONK</h4>
+            <p>Build intuition with visual explanations</p>
+            <a href="https://vitalik.eth.limo/general/2019/09/22/plonk.html" target="_blank" rel="noopener">Read &rarr;</a>
+          </div>
+        </div>
+        <div class="timeline-item theory-item">
+          <div class="timeline-marker">Theory</div>
+          <div class="timeline-content">
+            <h4>2. Original Research Paper</h4>
+            <p>Read the formal definitions and proofs</p>
+            <a href="https://eprint.iacr.org/2019/953.pdf" target="_blank" rel="noopener">Read &rarr;</a>
+          </div>
+        </div>
+        <div class="timeline-item practice-item">
+          <div class="timeline-marker">Practice</div>
+          <div class="timeline-content">
+            <h4>3. PlonKathon / Ronkathon</h4>
+            <p>Implement part of the PLONK proof system</p>
+            <a href="https://github.com/0xPARC/plonkathon" target="_blank" rel="noopener">Code &rarr;</a>
+          </div>
+        </div>
+        <div class="timeline-item theory-item">
+          <div class="timeline-marker">Reference</div>
+          <div class="timeline-content">
+            <h4>4. David Wong's PLONK Series</h4>
+            <p>Reference specific components as needed</p>
+            <a href="https://www.youtube.com/watch?v=RUZcam_jrz0&list=PLBJMt6zV1c7Gh9Utg-Vng2V6EYVidTFCC" target="_blank" rel="noopener">Watch &rarr;</a>
+          </div>
+        </div>
+        <div class="timeline-item practice-item">
+          <div class="timeline-marker">Deep Dive</div>
+          <div class="timeline-content">
+            <h4>5. PLONK by Hand</h4>
+            <p>Work through every calculation with pencil and paper</p>
+            <a href="https://research.metastate.dev/plonk-by-hand-part-1/" target="_blank" rel="noopener">Start &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Built from <a href="https://github.com/mmurrs/learnPLONK" target="_blank" rel="noopener">learnPLONK</a> &mdash; a curated learning guide by Matt Murray</p>
+      <p>Remember: ChatGPT &amp; Claude are your friends throughout this journey.</p>
+    </footer>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
