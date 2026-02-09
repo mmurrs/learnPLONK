@@ -638,6 +638,206 @@ th {
   margin-top: 0.25rem;
 }
 
+/* ===== Circuit Diagram ===== */
+.circuit-container {
+  margin: 1rem 0;
+}
+
+.circuit-svg {
+  width: 100%;
+  max-width: 700px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.wire {
+  stroke: var(--text-dim);
+  stroke-width: 2;
+  fill: none;
+}
+
+.wire-copy {
+  stroke: var(--accent);
+  stroke-dasharray: 6 4;
+  opacity: 0.6;
+}
+
+.wire-const {
+  stroke: var(--yellow);
+  stroke-dasharray: 4 3;
+  opacity: 0.6;
+}
+
+.wire-out {
+  stroke: var(--green);
+  stroke-width: 3;
+}
+
+.gate {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gate-mul {
+  fill: rgba(124, 111, 247, 0.15);
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.gate-add {
+  fill: rgba(96, 165, 250, 0.15);
+  stroke: var(--blue);
+  stroke-width: 2;
+}
+
+.gate-const {
+  fill: rgba(251, 191, 36, 0.15);
+  stroke: var(--yellow);
+  stroke-width: 2;
+}
+
+.gate:hover, .gate.active {
+  filter: brightness(1.4);
+  stroke-width: 3;
+}
+
+.gate-label {
+  fill: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  text-anchor: middle;
+  pointer-events: none;
+  font-family: var(--font-mono);
+}
+
+.gate-sublabel {
+  fill: var(--text-muted);
+  font-size: 10px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.const-label {
+  fill: var(--yellow);
+  font-size: 16px;
+}
+
+.wire-label {
+  fill: var(--text-muted);
+  font-size: 12px;
+  text-anchor: end;
+  font-family: var(--font-mono);
+}
+
+.out-label {
+  text-anchor: start;
+  fill: var(--green);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.wire-value {
+  fill: var(--text-dim);
+  font-size: 11px;
+  text-anchor: middle;
+  font-family: var(--font-mono);
+}
+
+.circuit-info {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  margin-top: 1rem;
+  min-height: 3rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+}
+
+.circuit-info.active {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+/* ===== Polynomial Playground ===== */
+.poly-playground {
+  margin: 1rem 0;
+}
+
+.poly-controls {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.poly-input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.poly-input-group label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.poly-slider {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.poly-val {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--accent-light);
+  min-width: 2em;
+  text-align: center;
+}
+
+#polyCanvas {
+  width: 100%;
+  max-width: 600px;
+  height: 300px;
+  display: block;
+  margin: 0 auto;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.poly-equation {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--accent-light);
+  background: rgba(124, 111, 247, 0.08);
+  border: 1px solid rgba(124, 111, 247, 0.2);
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+
+.poly-note {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .poly-controls {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 /* ===== Quiz ===== */
 .quiz-card {
   background: var(--bg-card);

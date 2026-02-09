@@ -289,6 +289,69 @@
       </div>
 
       <div class="card">
+        <h3>Interactive: Arithmetic Circuit</h3>
+        <p>This is the circuit for proving you know <code>x</code> such that <strong>x&sup3; + x + 5 = 35</strong> (where x = 3). Click on any gate or wire to see what it does.</p>
+        <div class="circuit-container" id="circuitDiagram">
+          <svg viewBox="0 0 700 340" class="circuit-svg">
+            <!-- Wires -->
+            <line x1="80" y1="60" x2="180" y2="60" class="wire" />
+            <line x1="80" y1="100" x2="180" y2="100" class="wire" />
+            <line x1="280" y1="80" x2="370" y2="60" class="wire" />
+            <line x1="80" y1="60" x2="80" y2="200" class="wire wire-copy" />
+            <line x1="80" y1="200" x2="370" y2="100" class="wire wire-copy" />
+            <line x1="280" y1="80" x2="280" y2="200" class="wire" />
+            <line x1="280" y1="200" x2="370" y2="220" class="wire" />
+            <line x1="80" y1="200" x2="80" y2="240" class="wire wire-copy" />
+            <line x1="80" y1="240" x2="370" y2="240" class="wire wire-copy" />
+            <line x1="470" y1="80" x2="560" y2="60" class="wire" />
+            <line x1="470" y1="230" x2="560" y2="100" class="wire" />
+            <line x1="500" y1="170" x2="560" y2="100" class="wire wire-const" />
+            <line x1="660" y1="80" x2="690" y2="80" class="wire wire-out" />
+
+            <!-- Gate: MUL1 (x * x = x²) -->
+            <rect x="180" y="50" width="100" height="60" rx="8" class="gate gate-mul" data-gate="mul1" />
+            <text x="230" y="85" class="gate-label">MUL</text>
+            <text x="230" y="70" class="gate-sublabel">x * x</text>
+
+            <!-- Gate: MUL2 (x² * x = x³) -->
+            <rect x="370" y="50" width="100" height="60" rx="8" class="gate gate-mul" data-gate="mul2" />
+            <text x="420" y="85" class="gate-label">MUL</text>
+            <text x="420" y="70" class="gate-sublabel">x&sup2; * x</text>
+
+            <!-- Gate: ADD1 (x³ + x) -->
+            <rect x="370" y="200" width="100" height="60" rx="8" class="gate gate-add" data-gate="add1" />
+            <text x="420" y="235" class="gate-label">ADD</text>
+            <text x="420" y="220" class="gate-sublabel">x&sup3; + x</text>
+
+            <!-- Constant: 5 -->
+            <circle cx="500" cy="170" r="20" class="gate gate-const" data-gate="const" />
+            <text x="500" y="175" class="gate-label const-label">5</text>
+
+            <!-- Gate: ADD2 (x³+x) + 5 = output -->
+            <rect x="560" y="50" width="100" height="60" rx="8" class="gate gate-add" data-gate="add2" />
+            <text x="610" y="85" class="gate-label">ADD</text>
+            <text x="610" y="70" class="gate-sublabel">(x&sup3;+x)+5</text>
+
+            <!-- Input label -->
+            <text x="55" y="65" class="wire-label">x=3</text>
+            <text x="55" y="105" class="wire-label">x=3</text>
+
+            <!-- Output label -->
+            <text x="692" y="85" class="wire-label out-label">35</text>
+
+            <!-- Intermediate labels -->
+            <text x="310" y="72" class="wire-value">9</text>
+            <text x="320" y="195" class="wire-value">9</text>
+            <text x="505" y="75" class="wire-value">27</text>
+            <text x="505" y="230" class="wire-value">30</text>
+          </svg>
+          <div class="circuit-info" id="circuitInfo">
+            <p>Click on a gate to learn what it does.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
         <h3>Copy Constraints (The "P" in PLONK)</h3>
         <p>When wires from one gate feed into another, we need <strong>copy constraints</strong> to ensure the same value appears in both places. This is where <strong>permutation arguments</strong> come in.</p>
         <p>PLONK uses a clever permutation argument to check that wire values are consistent across gates. Instead of checking each connection individually, it encodes all wire connections as a single permutation and verifies it using a <strong>grand product argument</strong>.</p>
@@ -383,6 +446,38 @@
             </ul>
             <p>This structure is critical for PLONK's efficiency &mdash; without it, polynomial operations would be prohibitively expensive.</p>
           </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Interactive: Lagrange Interpolation</h3>
+        <p>Set values at 4 evaluation points and see the unique polynomial that passes through them. This is exactly what PLONK does &mdash; it encodes wire values as evaluations and recovers polynomials via Lagrange interpolation.</p>
+        <div class="poly-playground" id="polyPlayground">
+          <div class="poly-controls">
+            <div class="poly-input-group">
+              <label>f(&omega;<sup>0</sup>) = f(1)</label>
+              <input type="range" min="-5" max="5" value="3" class="poly-slider" data-index="0">
+              <span class="poly-val" data-index="0">3</span>
+            </div>
+            <div class="poly-input-group">
+              <label>f(&omega;<sup>1</sup>)</label>
+              <input type="range" min="-5" max="5" value="1" class="poly-slider" data-index="1">
+              <span class="poly-val" data-index="1">1</span>
+            </div>
+            <div class="poly-input-group">
+              <label>f(&omega;<sup>2</sup>)</label>
+              <input type="range" min="-5" max="5" value="-2" class="poly-slider" data-index="2">
+              <span class="poly-val" data-index="2">-2</span>
+            </div>
+            <div class="poly-input-group">
+              <label>f(&omega;<sup>3</sup>)</label>
+              <input type="range" min="-5" max="5" value="4" class="poly-slider" data-index="3">
+              <span class="poly-val" data-index="3">4</span>
+            </div>
+          </div>
+          <canvas id="polyCanvas" width="600" height="300"></canvas>
+          <div class="poly-equation" id="polyEquation">f(x) = ...</div>
+          <p class="poly-note">In PLONK, these evaluation points are roots of unity in a finite field. Here we use simple real numbers for visualization. The same principle applies: <strong>n points uniquely determine a polynomial of degree &lt; n</strong>.</p>
         </div>
       </div>
 
