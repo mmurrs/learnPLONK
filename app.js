@@ -427,6 +427,31 @@
     draw();
   }
 
+  // --- Scroll Reveal ---
+  function initScrollReveal() {
+    const elements = document.querySelectorAll('.card, .quiz-card, .path-summary, .glossary-section');
+
+    // If user prefers reduced motion, just show everything
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      elements.forEach(el => el.classList.add('visible'));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    elements.forEach(el => observer.observe(el));
+  }
+
   // --- Init ---
   function init() {
     initNavigation();
@@ -436,6 +461,7 @@
     initChecklist();
     initCircuitDiagram();
     initPolyPlayground();
+    initScrollReveal();
     restoreQuizState();
     updateProgress();
   }

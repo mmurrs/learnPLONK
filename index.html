@@ -970,6 +970,116 @@
       </div>
     </section>
 
+    <!-- Glossary -->
+    <section class="module glossary-section">
+      <div class="module-header">
+        <h2>Glossary</h2>
+        <p class="module-desc">Quick reference for key terms. Click any term to expand its definition.</p>
+      </div>
+
+      <div class="glossary-grid">
+        <div class="glossary-item collapsible">
+          <button class="collapsible-toggle glossary-toggle">
+            <span class="glossary-term">Arithmetization</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <p>The process of converting a computation into arithmetic constraints (polynomial equations) that can be checked by a proof system. In PLONK, this means expressing a program as a circuit of addition and multiplication gates.</p>
+          </div>
+        </div>
+
+        <div class="glossary-item collapsible">
+          <button class="collapsible-toggle glossary-toggle">
+            <span class="glossary-term">Copy Constraint</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <p>A constraint that enforces two wire positions in the circuit to hold the same value. Implemented via a permutation argument &mdash; a permutation maps each wire position to the next position that should hold the same value.</p>
+          </div>
+        </div>
+
+        <div class="glossary-item collapsible">
+          <button class="collapsible-toggle glossary-toggle">
+            <span class="glossary-term">Fiat-Shamir Heuristic</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <p>A technique to make an interactive proof non-interactive. Instead of waiting for verifier challenges, the prover hashes the transcript so far to derive challenges deterministically. This is what makes PLONK (the "N" for Noninteractive) work.</p>
+          </div>
+        </div>
+
+        <div class="glossary-item collapsible">
+          <button class="collapsible-toggle glossary-toggle">
+            <span class="glossary-term">KZG Commitment</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <p>Kate-Zaverucha-Goldberg polynomial commitment scheme. Allows committing to a polynomial as a single elliptic curve point, then proving evaluations with a single-point opening proof. Requires a trusted setup (powers of tau) but gives constant-size proofs.</p>
+          </div>
+        </div>
+
+        <div class="glossary-item collapsible">
+          <button class="collapsible-toggle glossary-toggle">
+            <span class="glossary-term">Lagrange Basis</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <p>A set of polynomials L<sub>i</sub>(x) where L<sub>i</sub> equals 1 at the i-th evaluation point and 0 at all others. Any polynomial can be expressed as a weighted sum of Lagrange basis polynomials, where the weights are the evaluation values. This is the "L" in PLONK.</p>
+          </div>
+        </div>
+
+        <div class="glossary-item collapsible">
+          <button class="collapsible-toggle glossary-toggle">
+            <span class="glossary-term">Roots of Unity</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <p>The n-th roots of unity are elements &omega; where &omega;<sup>n</sup> = 1. They form a cyclic multiplicative subgroup {1, &omega;, &omega;&sup2;, ..., &omega;<sup>n-1</sup>}. PLONK evaluates constraint polynomials at these points, and their structure enables efficient FFT-based polynomial operations.</p>
+          </div>
+        </div>
+
+        <div class="glossary-item collapsible">
+          <button class="collapsible-toggle glossary-toggle">
+            <span class="glossary-term">Selector Polynomial</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <p>Polynomials (q<sub>L</sub>, q<sub>R</sub>, q<sub>O</sub>, q<sub>M</sub>, q<sub>C</sub>) that define the type of each gate in the circuit. For example, setting q<sub>M</sub>=1 and q<sub>O</sub>=-1 with others at 0 makes a multiplication gate. These are public and fixed for a given circuit.</p>
+          </div>
+        </div>
+
+        <div class="glossary-item collapsible">
+          <button class="collapsible-toggle glossary-toggle">
+            <span class="glossary-term">SRS (Structured Reference String)</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <p>The output of the trusted setup ceremony. Contains powers of a secret s encoded on the elliptic curve: [s<sup>i</sup>]<sub>1</sub>. The secret s (toxic waste) must be destroyed. PLONK's SRS is universal &mdash; it works for any circuit up to a maximum size.</p>
+          </div>
+        </div>
+
+        <div class="glossary-item collapsible">
+          <button class="collapsible-toggle glossary-toggle">
+            <span class="glossary-term">Vanishing Polynomial</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <p>Z<sub>H</sub>(x) = x<sup>n</sup> - 1, the polynomial that equals zero at all n roots of unity. If a constraint polynomial is divisible by Z<sub>H</sub>, it means the constraints hold at every gate position. The quotient t(x) = constraints(x) / Z<sub>H</sub>(x) is a key part of the proof.</p>
+          </div>
+        </div>
+
+        <div class="glossary-item collapsible">
+          <button class="collapsible-toggle glossary-toggle">
+            <span class="glossary-term">Witness</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="collapsible-content">
+            <p>The private input(s) that the prover knows and wants to prove knowledge of without revealing. In PLONK, the witness includes all wire values in the circuit. These are encoded as polynomials a(x), b(x), c(x) and committed to using KZG.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Recommended Path Summary -->
     <section class="module path-summary">
       <div class="module-header">

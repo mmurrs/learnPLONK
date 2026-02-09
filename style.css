@@ -1140,6 +1140,70 @@ th {
   font-weight: 600;
 }
 
+/* ===== Glossary ===== */
+.glossary-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+}
+
+.glossary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.glossary-item {
+  border-radius: var(--radius-sm);
+}
+
+.glossary-toggle {
+  padding: 0.7rem 1rem;
+  font-size: 0.9rem;
+}
+
+.glossary-term {
+  font-weight: 600;
+  color: var(--accent-light);
+}
+
+.glossary-item .collapsible-content {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.glossary-item .collapsible-content p {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .glossary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Scroll Reveal Animation ===== */
+.card, .quiz-card, .path-summary, .glossary-section {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.card.visible, .quiz-card.visible, .path-summary.visible, .glossary-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* For users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .card, .quiz-card, .path-summary, .glossary-section {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 /* ===== Footer ===== */
 footer {
   text-align: center;
